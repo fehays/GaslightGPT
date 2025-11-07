@@ -115,7 +115,7 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
   // Empty state - centered prompt with centered input
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center px-2 sm:px-4 py-12">
+      <div className="flex-1 flex items-center px-4 sm:px-6 py-12">
         <div className="w-full max-w-3xl mx-auto space-y-8">
           {/* Prompt */}
           <h1 className="text-3xl md:text-4xl font-medium text-foreground">
@@ -155,7 +155,7 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
       {/* Messages Area */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-2 sm:px-4"
+        className="flex-1 overflow-y-auto px-4 sm:px-6"
       >
         <div className="max-w-4xl mx-auto py-4 sm:py-6 space-y-6">
           {messages.map((message) => (
@@ -173,7 +173,7 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
 
       {/* Bottom Input Area */}
       <div className="border-t bg-background">
-        <div className="max-w-4xl mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="relative flex items-center gap-2 bg-secondary border border-border p-2 rounded-xl shadow-sm">
             <Textarea
               ref={textareaRef}
