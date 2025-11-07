@@ -94,19 +94,19 @@ export default function Sidebar({
             ) : (
               <div className="space-y-1">
                 {chatHistory.map((chat) => (
-                  <div key={chat.id} className="group relative flex items-center gap-1">
+                  <div key={chat.id} className="group relative flex items-center gap-1 min-w-0">
                     <button
                       onClick={() => onSelectChat(chat.id)}
                       className={cn(
                         'flex-1 text-left px-2 py-2 rounded-md',
                         'flex items-start gap-2',
                         'hover:bg-accent transition-colors',
-                        'text-sm',
+                        'text-sm min-w-0',
                         currentChatId === chat.id && 'bg-accent'
                       )}
                     >
                       <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <span className="truncate flex-1">{chat.title}</span>
+                      <span className="truncate flex-1 min-w-0">{chat.title}</span>
                     </button>
                     <Button
                       variant="ghost"

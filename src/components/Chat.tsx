@@ -3,10 +3,8 @@ import { Send } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from './ui/button'
 import { Textarea } from './ui/textarea'
-import { ScrollArea } from './ui/scroll-area'
 import { ChatMessage } from './ChatMessage'
 import { TypingIndicator } from './TypingIndicator'
-import { cn } from '@/lib/utils'
 import { Message } from '@/types'
 
 interface ChatProps {
@@ -19,13 +17,12 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isLoading])
 
   // Auto-resize textarea
@@ -118,7 +115,7 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
   // Empty state - centered prompt with centered input
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center px-4 py-12">
+      <div className="flex-1 flex items-center px-2 sm:px-4 py-12">
         <div className="w-full max-w-3xl mx-auto space-y-8">
           {/* Prompt */}
           <h1 className="text-3xl md:text-4xl font-medium text-foreground">
@@ -134,7 +131,7 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type a message..."
-                className="min-h-[56px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="min-h-[56px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 flex-1 min-w-0"
                 disabled={isLoading}
               />
               <Button
@@ -156,11 +153,11 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Messages Area */}
-      <ScrollArea
+      <div
         ref={scrollRef}
-        className="flex-1 px-4"
+        className="flex-1 overflow-y-auto px-2 sm:px-4"
       >
-        <div className="max-w-4xl mx-auto py-6 space-y-6">
+        <div className="max-w-4xl mx-auto py-4 sm:py-6 space-y-6">
           {messages.map((message) => (
             <ChatMessage
               key={message.id}
@@ -170,12 +167,13 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
             />
           ))}
           {isLoading && <TypingIndicator />}
+          <div ref={messagesEndRef} />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Bottom Input Area */}
       <div className="border-t bg-background">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="max-w-4xl mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="relative flex items-center gap-2 bg-secondary border border-border p-2 rounded-xl shadow-sm">
             <Textarea
               ref={textareaRef}
@@ -183,7 +181,7 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type a message..."
-              className="min-h-[56px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="min-h-[56px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 flex-1 min-w-0"
               disabled={isLoading}
             />
             <Button
