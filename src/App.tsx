@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Toaster, toast } from 'sonner'
 import { Chat } from './components/Chat'
 import Sidebar from './components/Sidebar'
@@ -26,6 +26,7 @@ function App() {
   const [currentChatId, setCurrentChat] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [showGaslitLabels, setShowGaslitLabels] = useState(true)
+  const chatIdRef = useRef<string | null>(null)
 
   // Load chat history on mount
   useEffect(() => {
@@ -37,6 +38,7 @@ function App() {
     if (lastChatId) {
       const chat = getChatById(lastChatId)
       if (chat) {
+        chatIdRef.current = chat.id
         setCurrentChat(chat.id)
         setMessages(chat.messages)
       }
@@ -87,6 +89,7 @@ function App() {
 
   const handleNewChat = () => {
     const newChatId = String(Date.now())
+    chatIdRef.current = newChatId
     setCurrentChat(newChatId)
     setCurrentChatId(newChatId)
     setMessages([])
@@ -97,6 +100,7 @@ function App() {
   const handleSelectChat = (chatId: string) => {
     const chat = getChatById(chatId)
     if (chat) {
+      chatIdRef.current = chat.id
       setCurrentChat(chat.id)
       setCurrentChatId(chat.id)
       setMessages(chat.messages)
@@ -109,6 +113,7 @@ function App() {
     setChatHistory(getAllChats())
     // If deleting current chat, clear it
     if (currentChatId === chatId) {
+      chatIdRef.current = null
       setMessages([])
       setCurrentChat(null)
       setCurrentChatId(null)
@@ -122,6 +127,7 @@ function App() {
       setChatHistory(getAllChats())
       toast.success('Current chat cleared')
     }
+    chatIdRef.current = null
     setMessages([])
     setCurrentChat(null)
     setCurrentChatId(null)
@@ -130,6 +136,7 @@ function App() {
 
   const handleClearAllChats = () => {
     clearAllChats()
+    chatIdRef.current = null
     setChatHistory([])
     setMessages([])
     setCurrentChat(null)
@@ -145,14 +152,16 @@ function App() {
   }
 
   const handleMessagesUpdate = (newMessages: Message[]) => {
-    setMessages(newMessages)
-
-    // If this is the first message and no chat ID exists, create one
-    if (!currentChatId && newMessages.length > 0) {
+    // If this is the first message and no chat ID exists, create one BEFORE updating messages
+    // Use ref to prevent race condition when API responds quickly
+    if (!chatIdRef.current && newMessages.length > 0) {
       const newChatId = String(Date.now())
+      chatIdRef.current = newChatId
       setCurrentChat(newChatId)
       setCurrentChatId(newChatId)
     }
+
+    setMessages(newMessages)
   }
 
   return (
