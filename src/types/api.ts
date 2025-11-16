@@ -1,4 +1,4 @@
-import { Message } from './chat'
+import { Message, ApiProvider } from './chat'
 
 /**
  * Request payload for chat API
@@ -11,6 +11,12 @@ export interface ChatRequest {
     role: 'user' | 'assistant' | 'system'
     content: string
   }>
+  /** Optional API provider to use */
+  apiProvider?: ApiProvider
+  /** Optional API key for the request */
+  apiKey?: string
+  /** Optional model to use */
+  model?: string
 }
 
 /**
