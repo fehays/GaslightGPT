@@ -44,11 +44,19 @@ app.post('/api/chat', async (req, res) => {
   // Get provider configuration
   const config = PROVIDERS[apiProvider];
 
-  // Use provided API key or fallback to environment variable
-  const effectiveApiKey = apiKey || process.env.OPENAI_API_KEY;
+  // For GROQ: use environment variable if no API key provided
+  // For other providers: require user-provided API key
+  let effectiveApiKey = apiKey;
+  if (apiProvider === 'groq' && !effectiveApiKey) {
+    effectiveApiKey = process.env.GROQ_API_KEY;
+  }
 
   if (!effectiveApiKey) {
-    return res.status(400).json({ error: 'API key required' });
+    return res.status(400).json({
+      error: apiProvider === 'groq'
+        ? 'GROQ_API_KEY environment variable not set'
+        : `API key required for ${apiProvider}`
+    });
   }
 
   try {
