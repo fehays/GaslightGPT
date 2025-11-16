@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 
 dotenv.config();
 
@@ -9,8 +9,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 app.post('/api/chat', async (req, res) => {
@@ -21,7 +21,7 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+    const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
     const response = await client.chat.completions.create({
       model: model,
@@ -36,7 +36,7 @@ app.post('/api/chat', async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error contacting ChatGPT' });
+    res.status(500).json({ error: 'Error contacting Groq' });
   }
 });
 

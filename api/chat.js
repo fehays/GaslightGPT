@@ -1,7 +1,7 @@
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 export default async function handler(req, res) {
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
     const response = await client.chat.completions.create({
       model: model,
@@ -61,6 +61,6 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error contacting ChatGPT" });
+    res.status(500).json({ error: "Error contacting Groq" });
   }
 }

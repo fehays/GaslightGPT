@@ -1,6 +1,6 @@
 # GaslightGPT
 
-A modern, type-safe ChatGPT web client with advanced message editing and chat history management. Built with React 18, TypeScript, Vite, Tailwind CSS, and Shadcn/ui components for a premium user experience.
+A modern, type-safe AI chat web client powered by Groq with advanced message editing and chat history management. Built with React 18, TypeScript, Vite, Tailwind CSS, and Shadcn/ui components for a premium user experience.
 
 ## ✨ Features
 
@@ -28,7 +28,7 @@ A modern, type-safe ChatGPT web client with advanced message editing and chat hi
 - **Notifications**: Sonner (toast library)
 - **Markdown**: React Markdown with GitHub Flavored Markdown
 - **Backend**: Vercel Serverless Functions / Express (local dev)
-- **AI**: OpenAI API (GPT-4o-mini by default)
+- **AI**: Groq API (Llama 3.3 70B by default)
 - **Storage**: localStorage for chat history and preferences
 
 ## 📁 Project Structure
@@ -36,7 +36,7 @@ A modern, type-safe ChatGPT web client with advanced message editing and chat hi
 ```
 GaslightGPT/
 ├── api/                          # Vercel serverless functions
-│   └── chat.js                   # ChatGPT API endpoint (production)
+│   └── chat.js                   # Groq API endpoint (production)
 ├── src/
 │   ├── components/               # React components
 │   │   ├── ui/                   # Shadcn/ui components
@@ -114,8 +114,8 @@ vercel
 In your Vercel dashboard:
 1. Go to Settings → Environment Variables
 2. Add these variables:
-   - `OPENAI_API_KEY`: Your OpenAI API key ([get one here](https://platform.openai.com/api-keys))
-   - `OPENAI_MODEL`: (optional) Model to use (default: `gpt-4o-mini`)
+   - `GROQ_API_KEY`: Your Groq API key ([get one here](https://console.groq.com/keys))
+   - `GROQ_MODEL`: (optional) Model to use (default: `llama-3.3-70b-versatile`)
 
 ### 3. Redeploy
 
@@ -131,7 +131,7 @@ vercel --prod
 
 - Node.js (v18 or higher recommended)
 - npm or yarn
-- An OpenAI API key ([get one here](https://platform.openai.com/api-keys))
+- A Groq API key ([get one here](https://console.groq.com/keys))
 
 ### Quick Start
 
@@ -149,9 +149,9 @@ npm install
 # Create .env file
 cp .env.example .env
 
-# Edit .env and add your OPENAI_API_KEY
-# OPENAI_API_KEY=your_key_here
-# OPENAI_MODEL=gpt-4o-mini
+# Edit .env and add your GROQ_API_KEY
+# GROQ_API_KEY=your_key_here
+# GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 3. **Start the development server**
@@ -184,19 +184,20 @@ This will start at http://localhost:3000 but requires answering setup prompts on
 Create a `.env` file based on `.env.example`:
 
 ```env
-# OpenAI Configuration
-OPENAI_API_KEY=your_api_key_here
+# Groq Configuration
+GROQ_API_KEY=your_api_key_here
 
 # Optional: Model selection
-OPENAI_MODEL=gpt-4o-mini
+GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 **Available models:**
-- `gpt-4o-mini` (default, fast and cost-effective)
-- `gpt-4o`
-- `gpt-3.5-turbo`
-- `o1-preview`
-- `o1-mini`
+- `llama-3.3-70b-versatile` (default, best quality and speed balance)
+- `llama-3.1-8b-instant` (fastest responses)
+- `mixtral-8x7b-32768` (large context window)
+- `gemma2-9b-it` (Google's efficient model)
+
+Full model list: https://console.groq.com/docs/models
 
 ## 🎯 Usage
 
@@ -251,10 +252,10 @@ GaslightGPT follows a clean, modern design approach:
 - Check browser console for errors (F12 → Console tab)
 
 **API Errors:**
-- Verify your `OPENAI_API_KEY` is correct and active
-- Ensure you have API credits in your OpenAI account
-- Check if you're hitting rate limits
+- Verify your `GROQ_API_KEY` is correct and active
+- Check if you're hitting rate limits (Groq offers 1000 free requests)
 - Try a different model if one isn't working
+- Ensure the selected model is available on your Groq plan
 
 **TypeScript Errors:**
 - Run `npm run build` to check for type errors
