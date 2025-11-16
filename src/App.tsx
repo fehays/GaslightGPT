@@ -4,7 +4,7 @@ import { Chat } from './components/Chat'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import { SettingsDialog } from './components/SettingsDialog'
-import { Message, Conversation, ApiProvider } from './types'
+import { Message, Conversation, ApiProvider, ThemeName } from './types'
 import {
   getAllChats,
   saveChat,
@@ -23,11 +23,12 @@ import {
   getModel,
   setModel as saveModel
 } from './lib/chatStorage'
+import { applyTheme } from './lib/themes'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [theme, setTheme] = useState<'light' | 'dark'>(getTheme())
+  const [theme, setTheme] = useState<ThemeName>(getTheme() as ThemeName)
   const [chatHistory, setChatHistory] = useState<Conversation[]>([])
   const [currentChatId, setCurrentChat] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
@@ -61,8 +62,7 @@ function App() {
 
   // Apply theme to document
   useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light')
-    document.documentElement.classList.toggle('dark', theme === 'dark')
+    applyTheme(theme)
   }, [theme])
 
   // Save current chat when messages change
@@ -159,10 +159,10 @@ function App() {
     toast.success('All chat history cleared')
   }
 
-  const handleToggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
+  const handleThemeChange = (newTheme: ThemeName) => {
     setTheme(newTheme)
     saveTheme(newTheme)
+    toast.success(`Theme changed to ${newTheme.replace('-', ' ')}`)
   }
 
   const handleMessagesUpdate = (newMessages: Message[]) => {
@@ -195,12 +195,16 @@ function App() {
 
   return (
     <>
-      <Toaster position="top-center" theme={theme} richColors />
+      <Toaster
+        position="top-center"
+        theme={theme === 'default-light' ? 'light' : 'dark'}
+        richColors
+      />
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
         theme={theme}
-        onToggleTheme={handleToggleTheme}
+        onThemeChange={handleThemeChange}
         showGaslitLabels={showGaslitLabels}
         onToggleGaslitLabels={() => setShowGaslitLabels(!showGaslitLabels)}
         onClearChat={handleClearChat}

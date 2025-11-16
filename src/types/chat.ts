@@ -13,22 +13,34 @@ export interface Message {
 }
 
 /**
- * Supported API providers
+ * Available API providers
  */
 export type ApiProvider = 'groq' | 'openrouter' | 'together' | 'openai'
+
+/**
+ * Available theme names
+ */
+export type ThemeName =
+  | 'default-dark'
+  | 'default-light'
+  | 'midnight-galaxy'
+  | 'ocean-breeze'
+  | 'sunset-glow'
 
 /**
  * Settings for the application
  */
 export interface Settings {
-  /** Selected API provider */
+  /** API provider to use */
   apiProvider: ApiProvider
   /** API key for the selected provider */
   apiKey: string
   /** Model to use for chat completions */
   model: string
   /** Theme preference */
-  theme: 'light' | 'dark' | 'system'
+  theme: ThemeName
+  /** Show "Gaslit!" labels on edited messages */
+  showGaslitLabels: boolean
 }
 
 /**
