@@ -159,3 +159,130 @@ export function setTheme(theme: 'light' | 'dark'): boolean {
     return false
   }
 }
+
+// API Provider Settings
+const API_PROVIDER_KEY = 'gaslightgpt_api_provider'
+const API_KEY_KEY = 'gaslightgpt_api_key'
+const MODEL_KEY = 'gaslightgpt_model'
+
+/**
+ * Simple encryption for API keys (base64 encoding)
+ * Note: This is NOT cryptographically secure, just basic obfuscation
+ */
+function encryptKey(key: string): string {
+  return btoa(key)
+}
+
+/**
+ * Decrypt API key (base64 decoding)
+ */
+function decryptKey(encrypted: string): string {
+  try {
+    return atob(encrypted)
+  } catch {
+    return encrypted // Return as-is if not base64
+  }
+}
+
+/**
+ * Get selected API provider from localStorage
+ * @returns API provider string or 'groq' as default
+ */
+export function getApiProvider(): string {
+  try {
+    return localStorage.getItem(API_PROVIDER_KEY) || 'groq'
+  } catch (error) {
+    console.error('Error getting API provider:', error)
+    return 'groq'
+  }
+}
+
+/**
+ * Save selected API provider to localStorage
+ * @param provider - API provider name
+ */
+export function setApiProvider(provider: string): boolean {
+  try {
+    localStorage.setItem(API_PROVIDER_KEY, provider)
+    return true
+  } catch (error) {
+    console.error('Error saving API provider:', error)
+    return false
+  }
+}
+
+/**
+ * Get API key from localStorage (decrypted)
+ * @returns API key or empty string if not found
+ */
+export function getApiKey(): string {
+  try {
+    const encrypted = localStorage.getItem(API_KEY_KEY)
+    return encrypted ? decryptKey(encrypted) : ''
+  } catch (error) {
+    console.error('Error getting API key:', error)
+    return ''
+  }
+}
+
+/**
+ * Save API key to localStorage (encrypted)
+ * @param key - API key to save
+ */
+export function setApiKey(key: string): boolean {
+  try {
+    if (key.trim()) {
+      localStorage.setItem(API_KEY_KEY, encryptKey(key))
+    } else {
+      localStorage.removeItem(API_KEY_KEY)
+    }
+    return true
+  } catch (error) {
+    console.error('Error saving API key:', error)
+    return false
+  }
+}
+
+/**
+ * Clear API key from localStorage
+ */
+export function clearApiKey(): boolean {
+  try {
+    localStorage.removeItem(API_KEY_KEY)
+    return true
+  } catch (error) {
+    console.error('Error clearing API key:', error)
+    return false
+  }
+}
+
+/**
+ * Get selected model from localStorage
+ * @returns Model string or empty string if not found
+ */
+export function getModel(): string {
+  try {
+    return localStorage.getItem(MODEL_KEY) || ''
+  } catch (error) {
+    console.error('Error getting model:', error)
+    return ''
+  }
+}
+
+/**
+ * Save selected model to localStorage
+ * @param model - Model name
+ */
+export function setModel(model: string): boolean {
+  try {
+    if (model.trim()) {
+      localStorage.setItem(MODEL_KEY, model)
+    } else {
+      localStorage.removeItem(MODEL_KEY)
+    }
+    return true
+  } catch (error) {
+    console.error('Error saving model:', error)
+    return false
+  }
+}

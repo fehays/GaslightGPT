@@ -4,7 +4,7 @@ import { Chat } from './components/Chat'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import { SettingsDialog } from './components/SettingsDialog'
-import { Message, Conversation } from './types'
+import { Message, Conversation, ApiProvider } from './types'
 import {
   getAllChats,
   saveChat,
@@ -15,7 +15,13 @@ import {
   getCurrentChatId,
   clearAllChats,
   getTheme,
-  setTheme as saveTheme
+  setTheme as saveTheme,
+  getApiProvider,
+  setApiProvider as saveApiProvider,
+  getApiKey,
+  setApiKey as saveApiKey,
+  getModel,
+  setModel as saveModel
 } from './lib/chatStorage'
 
 function App() {
@@ -26,9 +32,12 @@ function App() {
   const [currentChatId, setCurrentChat] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [showGaslitLabels, setShowGaslitLabels] = useState(true)
+  const [apiProvider, setApiProvider] = useState<ApiProvider>('groq')
+  const [apiKey, setApiKey] = useState('')
+  const [model, setModel] = useState('')
   const chatIdRef = useRef<string | null>(null)
 
-  // Load chat history on mount
+  // Load chat history and settings on mount
   useEffect(() => {
     const chats = getAllChats()
     setChatHistory(chats)
@@ -43,6 +52,11 @@ function App() {
         setMessages(chat.messages)
       }
     }
+
+    // Load API provider settings
+    setApiProvider(getApiProvider() as ApiProvider)
+    setApiKey(getApiKey())
+    setModel(getModel())
   }, [])
 
   // Apply theme to document
@@ -164,6 +178,21 @@ function App() {
     setMessages(newMessages)
   }
 
+  const handleApiProviderChange = (provider: ApiProvider) => {
+    setApiProvider(provider)
+    saveApiProvider(provider)
+  }
+
+  const handleApiKeyChange = (key: string) => {
+    setApiKey(key)
+    saveApiKey(key)
+  }
+
+  const handleModelChange = (newModel: string) => {
+    setModel(newModel)
+    saveModel(newModel)
+  }
+
   return (
     <>
       <Toaster position="top-center" theme={theme} richColors />
@@ -176,6 +205,12 @@ function App() {
         onToggleGaslitLabels={() => setShowGaslitLabels(!showGaslitLabels)}
         onClearChat={handleClearChat}
         onClearAllChats={handleClearAllChats}
+        apiProvider={apiProvider}
+        onApiProviderChange={handleApiProviderChange}
+        apiKey={apiKey}
+        onApiKeyChange={handleApiKeyChange}
+        model={model}
+        onModelChange={handleModelChange}
       />
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
@@ -197,6 +232,9 @@ function App() {
             messages={messages}
             onMessagesUpdate={handleMessagesUpdate}
             showGaslitLabels={showGaslitLabels}
+            apiProvider={apiProvider}
+            apiKey={apiKey}
+            model={model}
           />
         </div>
       </div>

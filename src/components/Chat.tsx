@@ -5,15 +5,25 @@ import { Button } from './ui/button'
 import { Textarea } from './ui/textarea'
 import { ChatMessage } from './ChatMessage'
 import { TypingIndicator } from './TypingIndicator'
-import { Message } from '@/types'
+import { Message, ApiProvider } from '@/types'
 
 interface ChatProps {
   messages?: Message[]
   onMessagesUpdate: (messages: Message[]) => void
   showGaslitLabels?: boolean
+  apiProvider?: ApiProvider
+  apiKey?: string
+  model?: string
 }
 
-export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true }: ChatProps) {
+export function Chat({
+  messages = [],
+  onMessagesUpdate,
+  showGaslitLabels = true,
+  apiProvider,
+  apiKey,
+  model
+}: ChatProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -53,16 +63,29 @@ export function Chat({ messages = [], onMessagesUpdate, showGaslitLabels = true 
     setIsLoading(true)
 
     try {
+      const requestBody: any = {
+        message: userMessage.content,
+        history: messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      }
+
+      // Include API provider settings if provided
+      if (apiProvider) {
+        requestBody.apiProvider = apiProvider
+      }
+      if (apiKey) {
+        requestBody.apiKey = apiKey
+      }
+      if (model) {
+        requestBody.model = model
+      }
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: userMessage.content,
-          history: messages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
+        body: JSON.stringify(requestBody),
       })
 
       if (!response.ok) {

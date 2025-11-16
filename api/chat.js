@@ -1,8 +1,24 @@
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Provider configurations with baseURL and default models
+const PROVIDERS = {
+  groq: {
+    baseURL: 'https://api.groq.com/openai/v1',
+    defaultModel: 'llama-3.3-70b-versatile',
+  },
+  openrouter: {
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultModel: 'meta-llama/llama-3.2-3b-instruct:free',
+  },
+  together: {
+    baseURL: 'https://api.together.xyz/v1',
+    defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+  },
+  openai: {
+    baseURL: 'https://api.openai.com/v1',
+    defaultModel: 'gpt-4o-mini',
+  },
+};
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -25,7 +41,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { message, history } = req.body;
+  const { message, history, apiProvider = 'groq', apiKey, model } = req.body;
 
   // Input validation
   if (!message || typeof message !== "string" || message.trim().length === 0) {
@@ -45,11 +61,33 @@ export default async function handler(req, res) {
     }
   }
 
+  // Validate API provider
+  if (!PROVIDERS[apiProvider]) {
+    return res.status(400).json({ error: 'Invalid API provider' });
+  }
+
+  // Get provider configuration
+  const config = PROVIDERS[apiProvider];
+
+  // Use provided API key or fallback to environment variable
+  const effectiveApiKey = apiKey || process.env.OPENAI_API_KEY;
+
+  if (!effectiveApiKey) {
+    return res.status(400).json({ error: 'API key required' });
+  }
+
   try {
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    // Create OpenAI client with provider-specific baseURL
+    const client = new OpenAI({
+      baseURL: config.baseURL,
+      apiKey: effectiveApiKey,
+    });
+
+    // Use provided model or provider's default model
+    const selectedModel = model || config.defaultModel;
 
     const response = await client.chat.completions.create({
-      model: model,
+      model: selectedModel,
       messages: [
         ...(history || []),
         { role: "user", content: message },
@@ -61,6 +99,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error contacting ChatGPT" });
+    const errorMessage = err.message || 'Error contacting API';
+    res.status(500).json({ error: errorMessage });
   }
 }

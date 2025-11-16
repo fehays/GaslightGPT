@@ -13,10 +13,17 @@ export interface Message {
 }
 
 /**
+ * Supported API providers
+ */
+export type ApiProvider = 'groq' | 'openrouter' | 'together' | 'openai'
+
+/**
  * Settings for the application
  */
 export interface Settings {
-  /** API key for OpenAI */
+  /** Selected API provider */
+  apiProvider: ApiProvider
+  /** API key for the selected provider */
   apiKey: string
   /** Model to use for chat completions */
   model: string
