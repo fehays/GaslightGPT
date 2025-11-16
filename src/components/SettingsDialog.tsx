@@ -53,7 +53,7 @@ export function SettingsDialog({
   const providerInfo = {
     groq: {
       name: 'Groq',
-      description: 'Ultra-fast inference (1,000 requests/day free)',
+      description: 'Ultra-fast inference - no API key needed (uses server config)',
       signupUrl: 'https://console.groq.com/',
       defaultModel: 'llama-3.3-70b-versatile',
     },
@@ -179,42 +179,86 @@ export function SettingsDialog({
             {/* API Key Input */}
             <div className="space-y-2">
               <Label htmlFor="api-key" className="text-sm">
-                API Key
+                API Key {apiProvider === 'groq' && '(Optional)'}
               </Label>
-              <div className="relative">
-                <Input
-                  id="api-key"
-                  type={showApiKey ? 'text' : 'password'}
-                  value={apiKey}
-                  onChange={(e) => onApiKeyChange(e.target.value)}
-                  placeholder={`Enter your ${currentProvider.name} API key`}
-                  className="pr-10"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                >
-                  {showApiKey ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Don't have an API key?{' '}
-                <a
-                  href={currentProvider.signupUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Sign up for {currentProvider.name}
-                </a>
-              </p>
+              {apiProvider === 'groq' ? (
+                <>
+                  <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50 rounded-lg p-3">
+                    <div className="flex items-start gap-2">
+                      <span className="text-green-600 dark:text-green-400 text-sm">✓</span>
+                      <div className="space-y-1 text-xs">
+                        <p className="font-medium text-green-900 dark:text-green-100">
+                          Groq is ready to use
+                        </p>
+                        <p className="text-green-800 dark:text-green-200">
+                          This app is configured with a Groq API key. You can start chatting immediately without entering your own key.
+                          Optionally, you can provide your own key below to use your own quota.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="api-key"
+                      type={showApiKey ? 'text' : 'password'}
+                      value={apiKey}
+                      onChange={(e) => onApiKeyChange(e.target.value)}
+                      placeholder="Optional: Enter your own Groq API key"
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                    >
+                      {showApiKey ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="relative">
+                    <Input
+                      id="api-key"
+                      type={showApiKey ? 'text' : 'password'}
+                      value={apiKey}
+                      onChange={(e) => onApiKeyChange(e.target.value)}
+                      placeholder={`Enter your ${currentProvider.name} API key`}
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                    >
+                      {showApiKey ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Don't have an API key?{' '}
+                    <a
+                      href={currentProvider.signupUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Sign up for {currentProvider.name}
+                    </a>
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Model Input (Optional) */}
