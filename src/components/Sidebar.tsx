@@ -1,4 +1,5 @@
 import Logo from './Logo'
+import BmcIcon from './BmcIcon'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -124,6 +125,24 @@ export default function Sidebar({
               </div>
             )}
           </div>
+        </div>
+
+        {/* Buy Me a Coffee Button */}
+        <div className="border-t border-border">
+          <a
+            href="https://buymeacoffee.com/henryhays"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-2 px-4 py-3 h-auto rounded-none"
+            >
+              <BmcIcon className="text-foreground flex-shrink-0" size={20} />
+              <span className="text-sm font-medium">Buy Me a Coffee</span>
+            </Button>
+          </a>
         </div>
 
         {/* Settings Button */}
